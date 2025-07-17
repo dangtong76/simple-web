@@ -16,6 +16,6 @@ spec:
     spec:
       containers:
         - name: simple-web
-          image: dangtong76/simple-web
+          image: dangtong76/simple-web:3
           ports:
             - containerPort: 80
