@@ -42,6 +42,7 @@ jobs:
           repository: dangtong76/simple-web-platform
           ref: main
           path: .
+          username: "dangtong76"
           token: ${{ secrets.PAT }}
 
       # 이미지 태그 업데이트
