@@ -1,5 +1,5 @@
 ## .github/workflows/ec2-deploy-tough.yml
-name: AWS EC2-Deploy with Tough
+name: simple-web-ec2-deploy-tough
 on:
   push:
     branches:
