@@ -1,0 +1,32 @@
+## .github/workflows/ec2-deploy-tough.yml
+name: AWS EC2-Deploy with Tough
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploys:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1.소스코드 가져오기
+        uses: actions/checkout@v3
+      - name: 2.AWS 접속정보 설정
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+      - name: 2.SSH키 설정
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.AWS_KEY}}
+      - name: 3.파일 목록보기
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}  "ls -al /home/${{ secrets.AWS_USER }}"
+      - name: 4.파일 서버로 복사
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}  "sudo chown -R ec2-user:ec2-user /usr/share/nginx/html"
+          scp -o StrictHostKeyChecking=no -r ./* ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/usr/share/nginx/html
+      - name: Restart Web Server
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "sudo systemctl restart nginx || sudo systemctl restart httpd"
