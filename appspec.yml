@@ -1,0 +1,33 @@
+version: 0.0                # AppSpec 파일 버전
+os: linux                   # 배포 대상 운영체제
+
+files:                      # 복사할 파일 및 디렉터리 목록
+  - source: /               # 소스 디렉터리(전체)
+    destination: /usr/share/nginx/html/   # 복사 대상 경로
+    overwrite: true         # 기존 파일 덮어쓰기 허용
+
+permissions:                # 파일 및 디렉터리 권한 설정
+  - object: /usr/share/nginx/html         # 권한을 적용할 디렉터리
+    pattern: "**"                         # 모든 하위 디렉터리 포함
+    owner: nginx                          # 소유자
+    group: nginx                          # 그룹
+    mode: 755                             # 디렉터리 권한
+    type:
+      - directory                         # 디렉터리에만 적용
+  - object: /usr/share/nginx/html         # 권한을 적용할 디렉터리
+    pattern: "**/*"                       # 모든 파일 포함
+    owner: nginx                          # 소유자
+    group: nginx                          # 그룹
+    mode: 644                             # 파일 권한
+    type:
+      - file                              # 파일에만 적용
+
+hooks:                                    # 배포 라이프사이클 훅
+  BeforeInstall:                          # 설치 전 실행할 스크립트
+    - location: scripts/before_install.sh # 스크립트 경로
+      timeout: 300                        # 타임아웃(초)
+      runas: root                         # 실행 사용자
+  AfterInstall:                           # 설치 후 실행할 스크립트
+    - location: scripts/after_install.sh  # 스크립트 경로
+      timeout: 300                        # 타임아웃(초)
+      runas: root                         # 실행 사용자
